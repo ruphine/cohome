@@ -19,6 +19,8 @@ import javax.ejb.LocalBean;
 @LocalBean
 public class GestoreAnnunci {
     @EJB
+    private ModeratoreFacadeLocal moderatoreFacade;
+    @EJB
     private RichiestaVisitaFacadeLocal richiestaVisitaFacade;
     @EJB
     private RichiestaCasaFacadeLocal richiestaCasaFacade;
@@ -78,6 +80,16 @@ public class GestoreAnnunci {
         int k = 3;
     }
 
+    public void addAnnuncioCasa(AnnuncioCasa annuncioCasa){
+        Moderatore moderatore = new Moderatore();
+        moderatore.setEmail("marco rossi");
+        moderatore.setPassword("marco rossi");
+        List<Annuncio> annunci = moderatore.getAnnunci();
+        annunci.add(annuncioCasa);
+        moderatore.setAnnunci(annunci);
+        moderatoreFacade.create(moderatore);
+    
+    }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }

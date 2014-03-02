@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
+import ejb.AnnuncioCasa;
 import ejb.GestoreAnnunci;
-import ejb.GestoreCommenti;
-import ejb.GestoreUtenti;
+import ejb.Opzione;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,65 +22,68 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author marco
  */
-@WebServlet(urlPatterns = {"/MainServlet"})
-public class MainServlet extends HttpServlet {
-    @EJB
-    private GestoreCommenti gestoreCommenti;
+public class CreaAnnuncioCasa extends HttpServlet {
     @EJB
     private GestoreAnnunci gestoreAnnunci;
-    @EJB
-    private GestoreUtenti gestoreUtenti;
-    
-    
-    
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        Calendar dataGCI = new GregorianCalendar();
+        Calendar dataGCF= new GregorianCalendar();
+        String[] data = null;
+        AnnuncioCasa annuncioCasa = new AnnuncioCasa();
         
-        String action= request.getParameter("op");
-        String str = "";
-        RequestDispatcher rd;
-        if(action.equals("inserisci")){
-            str = request.getParameter("userComponent");
-            gestoreUtenti.addModeratore(str);
-            gestoreUtenti.addRegistered(str);
-            gestoreUtenti.addGuest(str);
-            gestoreAnnunci.addAnnuncioCasa(str);
-            gestoreCommenti.addModeratoreCommenti(str);
-            
+        String informazione = request.getParameter("titolo");
+        annuncioCasa.setTitolo(informazione);
+        informazione = request.getParameter("indirizzo");
+        annuncioCasa.setIndirizzo(informazione);
+        informazione = request.getParameter("numeroPosti");
+        annuncioCasa.setNumeroPosti(Integer.parseInt(informazione));
+        informazione = request.getParameter("dataInizio");
+        data = informazione.split("/");
+        dataGCI.set(Integer.parseInt(data[0]),(Integer.parseInt(data[1]) -1),Integer.parseInt(data[2]));
+        annuncioCasa.setDataInizio(dataGCI);
+        informazione = request.getParameter("dataFine");
+        data = informazione.split("/");
+        dataGCF.set(Integer.parseInt(data[0]),(Integer.parseInt(data[1]) - 1),Integer.parseInt(data[2]));
+        annuncioCasa.setDataFine(dataGCF);
+        informazione = request.getParameter("descrizione");
+        annuncioCasa.setDescrizione(informazione);
+        informazione = request.getParameter("localita");
+        annuncioCasa.setLocalita(informazione);
+        annuncioCasa.setAttivo(true);
+        //gestione opzioni
+        informazione = request.getParameter("fumatori");
+        List<Opzione> opzioni = annuncioCasa.getOpzioni();
+        if (informazione!= null){
+            Opzione opzione = new Opzione();
+            opzione.setNome("fumatori");
+            opzione.setValore("si");
+            opzioni.add(opzione);
         }
+        informazione = request.getParameter("animali");
+        if (informazione!= null){
+            Opzione opzione = new Opzione();
+            opzione.setNome("animali");
+            opzione.setValore("si");
+            opzioni.add(opzione);
+        }
+        annuncioCasa.setOpzioni(opzioni);
+        gestoreAnnunci.addAnnuncioCasa(annuncioCasa);
         
-        if(action.equals("InserisciAnnuncioCasa")){
-            rd = getServletContext().getRequestDispatcher("/AnnuncioCasa.jsp");
-            rd.forward(request,response);
-        }
-  
-        if(action.equals("creaAnnuncioCasa")){
-            rd = getServletContext().getRequestDispatcher("/CreaAnnuncioCasa");
-            rd.forward(request,response);
-        }
         
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MainServlet</title>");            
+            out.println("<title>Servlet CreaAnnuncioCasa</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet MainServlet at " + request.getContextPath() + "</h1>");
-            out.println(str);
-            out.println(action);
+            out.println("<h1>Servlet CreaAnnuncioCasa at " + request.getContextPath() + "</h1>");
+            out.println(informazione);
             out.println("</body>");
             out.println("</html>");
         }
