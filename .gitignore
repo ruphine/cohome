@@ -6,3 +6,7 @@
 *.ear
 /CoHome-ejb/build/
 /CoHome-ejb/dist/
+/CoHome-war/build/
+/build/
+/dist/
+/CoHome-war/dist/
