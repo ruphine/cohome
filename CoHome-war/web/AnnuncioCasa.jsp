@@ -10,6 +10,17 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Annuncio casa</title>
+        
+        <script language="javascript" type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="jquery.ui.core.js"></script>
+        <script type="text/javascript" src="jquery.ui.datepicker.js"></script>
+        <!-- INCLUDERE LA SEGUENTE LINEA PER LA TRADUZIONE DEL WIDGET IN ITALIANO -->
+        <script type="text/javascript" src="ui.datepicker-it.js"></script>
+
+        <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+      
     </head>
     <body>
         <h1>Inserisci i dati dell'annuncio della disponibilita' di una casa</h1>
@@ -29,12 +40,48 @@
                     <td><input name="numeroPosti" type="text" size="20"/></td>
                 </tr>
                 <tr>
-                    <td><label>Data inizio(aaaa/mm/gg)</label></td>
-                    <td><input name="dataInizio" type="text" size="20"/></td>
+                    
+                    <td><label>Clicca sul campo per inserire la data di inizio</label></td>
+
+                    <td id="dataInizio">
+		        <input
+			    name="dataInizio"
+			    id="dataInizioId"
+			    type="text"
+			    maxlength="20"
+			    size="20"
+		        />
+                    </td>
+
+	            <script type="text/javascript">
+		             $(document).ready(function(){
+			          $('#dataInizioId').datepicker({ dateFormat: 'dd/mm/yy' });
+		             });
+	            </script>
+                    
                 </tr>
                 <tr>
-                    <td><label>Data fine (aaaa/mm/gg)</label></td>
+                    <td><label>Clicca sul campo per inserire la data di fine</label></td>
+                    <!--
                     <td><input name="dataFine" type="text" size="20"/></td>
+                    -->
+                    <td id="dataFine">
+		        <input
+			    name="dataFine"
+			    id="dataFineId"
+			    type="text"
+			    maxlength="20"
+			    size="20"
+		        />
+                    </td>
+
+	            <script type="text/javascript">
+		             $(document).ready(function(){
+			          $('#dataFineId').datepicker({ dateFormat: 'dd/mm/yy' });
+		             });
+	            </script>                    
+                    
+                    
                 </tr>  
                 <tr>
                     <td><label>Descrizione</label></td>
@@ -50,5 +97,26 @@
             <input type="submit" value="invio"/>
             <input type="hidden" name="op" value="creaAnnuncioCasa">
         </form>
+        
+   <!--     
+	<div id="datepicker">
+		<label>clicca sul campo per aprire il widget</label>
+		<input
+			name="datepicker"
+			id="datepickerId"
+			type="text"
+			maxlength="10"
+			size="10"
+		/>
+        </div>
+
+
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#datepickerId').datepicker({ dateFormat: 'dd/mm/yy' });
+		});
+	</script>
+     -->   
     </body>
 </html>

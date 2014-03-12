@@ -43,11 +43,11 @@ public class CreaAnnuncioCasa extends HttpServlet {
         annuncioCasa.setNumeroPosti(Integer.parseInt(informazione));
         informazione = request.getParameter("dataInizio");
         data = informazione.split("/");
-        dataGCI.set(Integer.parseInt(data[0]),(Integer.parseInt(data[1]) -1),Integer.parseInt(data[2]));
+        dataGCI.set(Integer.parseInt(data[2]),(Integer.parseInt(data[1]) -1),Integer.parseInt(data[0]));
         annuncioCasa.setDataInizio(dataGCI);
         informazione = request.getParameter("dataFine");
         data = informazione.split("/");
-        dataGCF.set(Integer.parseInt(data[0]),(Integer.parseInt(data[1]) - 1),Integer.parseInt(data[2]));
+        dataGCF.set(Integer.parseInt(data[2]),(Integer.parseInt(data[1]) - 1),Integer.parseInt(data[0]));
         annuncioCasa.setDataFine(dataGCF);
         informazione = request.getParameter("descrizione");
         annuncioCasa.setDescrizione(informazione);
