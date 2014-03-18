@@ -185,5 +185,8 @@
         });       
     });      
     </script>
+    
+    <!-- da eliminare -->
+    <a href="/CoHome-war/MainServlet?op=getAllCommenti">prova commenti</a>
 </body>
 </html>

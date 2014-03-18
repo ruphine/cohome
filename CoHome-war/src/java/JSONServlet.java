@@ -4,38 +4,21 @@
  * and open the template in the editor.
  */
 
-package web;
-
-import Bean.RicercaAnnunciCasa;
-import ejb.Annuncio;
-import ejb.AnnuncioCasa;
-import ejb.Commento;
-import ejb.GestoreAnnunci;
-import ejb.GestoreCommenti;
-import ejb.GestoreUtenti;
+import ejb.*;
+import flexjson.JSONSerializer;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author Andr3A
+ * @author Alessandro
  */
-public class MainServlet extends HttpServlet {
-    @EJB
-    private GestoreUtenti gestoreUtenti;
-    @EJB
-    private GestoreCommenti gestoreCommenti;
-    @EJB
-    private GestoreAnnunci gestoreAnnunci;
-    
+public class JSONServlet extends HttpServlet {
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,37 +28,27 @@ public class MainServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    JSONSerializer serializer;
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession s = request.getSession();
-        String action= request.getParameter("op");
-        String str = "";
-        if(action.equals("inserisciAnnuncio")){
-            str = request.getParameter("userComponent");
-            gestoreUtenti.addModeratore(str);
-            gestoreUtenti.addRegistered(str);
-            gestoreUtenti.addGuest(str);
-            gestoreAnnunci.addAnnuncioCasa(str);
-            gestoreCommenti.addModeratoreCommenti(str);   
-        }
-        if(action.equals("cercaAnnunci")){
-            List<AnnuncioCasa> annunci=gestoreAnnunci.trovaAnnunciCasa();
-            request.setAttribute("annunci", annunci);
-            getServletContext().getRequestDispatcher("/viewAnnunci.jsp").forward(request,response);
-        }
-        if(action.equals("viewDettaglioAnnuncioCasa")){
-           int index = Integer.parseInt(request.getParameter("index"));         
-           getServletContext().getRequestDispatcher("/viewDetailsAnnuncio.jsp").forward(request,response);
-        }
         
-        if(action.equals("getAllCommenti")){
-             List<Commento> c;
-             c = gestoreCommenti.findAllCommenti(2);
-             request.setAttribute("commenti",c);
-             RequestDispatcher d = getServletContext().getRequestDispatcher("/provaCommenti.jsp");
-             d.forward(request,response);
-        }
+        /*----ALE----*/
+        AnnuncioCasa a = new AnnuncioCasa();
+        a.setTitolo("ProvaJSON");
+        a.setDescrizione("Annuncio di prova per testare il passaggio di JSON");
+        a.setLocalita("Torino");
         
+        JSONSerializer serial = new JSONSerializer();
+        String s = serial.serialize(a);
+        
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println(a.getDescrizione()+"<br>");
+            out.println(s);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
