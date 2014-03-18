@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToOne;
 
 /**
@@ -19,6 +20,17 @@ import javax.persistence.OneToOne;
  * @author marco
  */
 @Entity
+// Quando richiamiamo la query:
+// em.createNamedQuery("findAllCommenti").setParameter("Annuncio_Id",
+//          annuncioId)
+@NamedNativeQuery(
+name="findAllCommenti",
+query=  "SELECT c.* "+
+        "FROM Commento AS c, Annuncio_Commento AS ac "+
+        "WHERE ac.Commenti_Id=c.id AND ac.Annuncio_Id = Annuncio_Id",
+resultClass=Commento.class
+)
+
 public class Commento implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

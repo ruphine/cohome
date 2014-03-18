@@ -1,23 +1,41 @@
+package web;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import ejb.*;
-import flexjson.JSONSerializer;
+import ejb.Commento;
+import ejb.GestoreAnnunci;
+import ejb.GestoreCommenti;
+import ejb.GestoreUtenti;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Alessandro
+ * @author marco
  */
-public class JSONServlet extends HttpServlet {
+@WebServlet(urlPatterns = {"/MainServlet"})
+public class MainServlet extends HttpServlet {
+    @EJB
+    private GestoreCommenti gestoreCommenti;
+    @EJB
+    private GestoreAnnunci gestoreAnnunci;
+    @EJB
+    private GestoreUtenti gestoreUtenti;
+    
+    
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -28,27 +46,45 @@ public class JSONServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-    JSONSerializer serializer;
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        /*----ALE----*/
-        AnnuncioCasa a = new AnnuncioCasa();
-        a.setTitolo("ProvaJSON");
-        a.setDescrizione("Annuncio di prova per testare il passaggio di JSON");
-        a.setLocalita("Torino");
-        
-        JSONSerializer serial = new JSONSerializer();
-        String s = serial.serialize(a);
+        String action= request.getParameter("op");
+//        String str = "";
+//        if(action.equals("inserisci")){
+//            str = request.getParameter("userComponent");
+//            gestoreUtenti.addModeratore(str);
+//            gestoreUtenti.addRegistered(str);
+//            gestoreUtenti.addGuest(str);
+//            gestoreAnnunci.addAnnuncioCasa(str);
+//            gestoreCommenti.addModeratoreCommenti(str);
+//            
+//        }
         
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println(a.getDescrizione()+"<br>");
-            out.println(s);
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet MainServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet MainServlet at " + request.getContextPath() + "</h1>");
+//            out.println(str);
+            out.println("</body>");
+            out.println("</html>");
         }
+        
+        //da mettere in un if
+         if(action.equals("getAllCommenti")){
+             List<Commento> c;
+             c = gestoreCommenti.findAllCommenti(2);
+             request.setAttribute("commenti",c);
+             RequestDispatcher d = getServletContext().getRequestDispatcher("/index.html");
+             d.forward(request,response);
+        }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

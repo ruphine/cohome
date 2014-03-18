@@ -10,16 +10,25 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
-
+import javax.persistence.EntityManager;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 /**
  *
  * @author marco
  */
+
 @Stateless
 @LocalBean
 public class GestoreCommenti {
     @EJB
+    private CommentoFacadeLocal commentoFacade;
+    @EJB
     private ModeratoreFacadeLocal moderatoreFacade;
+    
+@PersistenceContext(unitName = "CoHome-ejbPU")
+private EntityManager em;
     
     public void addModeratoreCommenti(String moderatore){
         Moderatore utenteModeratore = new Moderatore();
@@ -43,7 +52,25 @@ public class GestoreCommenti {
         utenteModeratore.setRecensioni(recensioni);
         moderatoreFacade.create(utenteModeratore);    
     }
-
+    
+    public void addCommento(UserComponent user, String commento){
+        Commento c = new Commento();
+        c.setAutore(user);
+        c.setCommento(commento);
+        commentoFacade.create(c);
+    }
+    
+    public void delCommento(int id){
+        Commento c;
+        c = commentoFacade.find(id);
+        commentoFacade.remove(c);
+    }
+    
+    public List<Commento> findAllCommenti(int id_annuncio){
+       Query q;
+       q = em.createNamedQuery("findAllCommenti").setParameter("Annuncio_Id", id_annuncio);
+       return q.getResultList();
+    }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }

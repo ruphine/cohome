@@ -1,36 +1,25 @@
+package web;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import ejb.GestoreAnnunci;
-import ejb.GestoreCommenti;
-import ejb.GestoreUtenti;
+import ejb.*;
+import flexjson.JSONSerializer;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author marco
+ * @author Alessandro
  */
-@WebServlet(urlPatterns = {"/MainServlet"})
-public class MainServlet extends HttpServlet {
-    @EJB
-    private GestoreCommenti gestoreCommenti;
-    @EJB
-    private GestoreAnnunci gestoreAnnunci;
-    @EJB
-    private GestoreUtenti gestoreUtenti;
-    
-    
-    
+public class JSONServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,34 +30,26 @@ public class MainServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
+    JSONSerializer serializer;
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        String action= request.getParameter("op");
-        String str = "";
-        if(action.equals("inserisci")){
-            str = request.getParameter("userComponent");
-            gestoreUtenti.addModeratore(str);
-            gestoreUtenti.addRegistered(str);
-            gestoreUtenti.addGuest(str);
-            gestoreAnnunci.addAnnuncioCasa(str);
-            gestoreCommenti.addModeratoreCommenti(str);
-            
-        }
+        /*----ALE----*/
+        AnnuncioCasa a = new AnnuncioCasa();
+        a.setTitolo("ProvaJSON");
+        a.setDescrizione("Annuncio di prova per testare il passaggio di JSON");
+        a.setLocalita("Torino");
+        
+        JSONSerializer serial = new JSONSerializer();
+        String s = serial.serialize(a);
         
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet MainServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet MainServlet at " + request.getContextPath() + "</h1>");
-            out.println(str);
-            out.println("</body>");
-            out.println("</html>");
+            out.println(a.getDescrizione()+"<br>");
+            out.println(s);
         }
     }
 
