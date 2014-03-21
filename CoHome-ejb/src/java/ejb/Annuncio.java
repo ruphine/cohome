@@ -45,7 +45,6 @@ public abstract class Annuncio implements Serializable {
     private List<Opzione> opzioni = new ArrayList();
 
 
-    
     public List<Opzione> getOpzioni() {
         return opzioni;
     }

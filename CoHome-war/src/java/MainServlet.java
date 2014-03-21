@@ -7,21 +7,31 @@
 import ejb.GestoreAnnunci;
 import ejb.GestoreCommenti;
 import ejb.GestoreUtenti;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author marco
  */
 @WebServlet(urlPatterns = {"/MainServlet"})
+//aggiunto
+@MultipartConfig
 public class MainServlet extends HttpServlet {
     @EJB
     private GestoreCommenti gestoreCommenti;
@@ -30,8 +40,16 @@ public class MainServlet extends HttpServlet {
     @EJB
     private GestoreUtenti gestoreUtenti;
     
-    
-    
+
+    private static String getFilename(Part part) {
+       for (String cd : part.getHeader("content-disposition").split(";")) {
+          if (cd.trim().startsWith("filename")) {
+             String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
+             return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1); // MSIE fix.
+          }
+       }
+       return null;
+    }    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -69,6 +87,46 @@ public class MainServlet extends HttpServlet {
             rd.forward(request,response);
         }
         
+        if(action.equals("uploadFoto")){
+            Part filePart = request.getPart("nomeFile");
+            
+             //String nomeFile = getFilename(filePart);
+            FileWriter fileWriter = new FileWriter("C:/immagini/prova.txt");
+            BufferedWriter bufferedWriter=new BufferedWriter (fileWriter);
+            bufferedWriter.write("viva arlecchina");
+            
+            BufferedReader readerBuffered = new BufferedReader(new InputStreamReader(filePart.getInputStream()));
+            String line = null;
+            while ((line = readerBuffered.readLine()) != null){
+                System.out.println(line);
+                bufferedWriter.write(line);
+                bufferedWriter.flush();
+            }
+
+        }
+        //http://lancill.blogspot.it/2012/09/upload-di-un-file-in-java-con-le.html
+        if(action.equals("uploadFoto2")){
+            Part filePart = request.getPart("nomeFile");
+            String nomeFile = getFilename(filePart);
+            //System.out.println(nomeFile);
+            InputStream inputStream = null;
+            FileOutputStream outputStream = null;
+            try{
+                inputStream = filePart.getInputStream();
+                outputStream = new FileOutputStream("C:/immagini/" + nomeFile);
+                int c;
+                while ((c = inputStream.read()) != -1) { 
+                    outputStream.write(c);
+            }
+            }finally{
+                if(inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();  
+                }
+            }
+        }               
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
